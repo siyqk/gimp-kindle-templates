@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# GIMP runtime (NUNCA versionar)
+.cache/
+.config/
+templates/
+tmp/
+
+# Sistema
+.DS_Store
+Thumbs.db
