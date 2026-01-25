@@ -10,18 +10,74 @@ from gi.repository import Gimp, Gio, GLib, Gegl
 
 
 # ==============================================================
-# Constantes do template
+# Tipos de imagem – tamanhos IDEAIS (KDP + todos os dispositivos)
 # ==============================================================
 
-TEMPLATE_WIDTH = 1600
-TEMPLATE_HEIGHT = 900
-
-SAFE_MARGIN_RATIO = 0.05
+IMAGE_TYPES = {
+    "capa": {
+        "width": 2560,
+        "height": 1600,
+        "safe_ratio": 0.08,
+    },
+    "abertura_capitulo": {
+        "width": 2400,
+        "height": 1350,
+        "safe_ratio": 0.05,
+    },
+    "ilustracao": {
+        "width": 2400,
+        "height": 1800,
+        "safe_ratio": 0.05,
+    },
+    "imagem_informativa": {
+        "width": 2400,
+        "height": 1600,
+        "safe_ratio": 0.06,
+    },
+    "linha_do_tempo": {
+        "width": 2560,
+        "height": 900,
+        "safe_ratio": 0.05,
+    },
+    "mapa": {
+        "width": 2560,
+        "height": 1800,
+        "safe_ratio": 0.05,
+    },
+    "personagem": {
+        "width": 1800,
+        "height": 2400,
+        "safe_ratio": 0.05,
+    },
+    "ambiente": {
+        "width": 2560,
+        "height": 1440,
+        "safe_ratio": 0.05,
+    },
+    "fac_simile": {
+        "width": 1800,
+        "height": 2600,
+        "safe_ratio": 0.03,
+    },
+    "divisor": {
+        "width": 1600,
+        "height": 300,
+        "safe_ratio": 0.10,
+    },
+    "ornamento": {
+        "width": 1400,
+        "height": 400,
+        "safe_ratio": 0.10,
+    },
+    "decorativa_pura": {
+        "width": 2000,
+        "height": 1400,
+        "safe_ratio": 0.10,
+    },
+}
 
 SAFE_STROKE_COLOR = "#00ff00"
 SAFE_STROKE_WIDTH = 2.0
-
-TEMPLATE_FILENAME = "Kindle_SAFE_1600x900.xcf"
 
 
 # ==============================================================
@@ -31,14 +87,12 @@ TEMPLATE_FILENAME = "Kindle_SAFE_1600x900.xcf"
 class KindleTemplates(Gimp.PlugIn):
     __gtype_name__ = "KindleTemplates"
 
-    # ----------------------------------------------------------
     # i18n explicitamente desativado
-    # ----------------------------------------------------------
     def set_i18n(self):
         return False
 
     # ----------------------------------------------------------
-    # Registro do procedimento
+    # Registro
     # ----------------------------------------------------------
     def do_query_procedures(self):
         return ["plug-in-kindle-template-min"]
@@ -52,11 +106,11 @@ class KindleTemplates(Gimp.PlugIn):
             None,
         )
 
-        procedure.set_menu_label("Criar template Kindle (SAFE-AREA)")
+        procedure.set_menu_label("Criar templates Kindle (por tipo de imagem)")
         procedure.add_menu_path("<Image>/File/Create/Kindle")
         procedure.set_documentation(
-            "Cria um template Kindle com SAFE-AREA",
-            "Gera um XCF com guias e área segura",
+            "Cria templates Kindle por tipo de imagem",
+            "Gera XCFs com SAFE-AREA e guias para cada tipo semântico",
             name,
         )
         procedure.set_attribution("mjucimara", "mjucimara", "2026")
@@ -68,17 +122,29 @@ class KindleTemplates(Gimp.PlugIn):
     # Execução principal
     # ----------------------------------------------------------
     def run(self, procedure, run_mode, image, n_drawables, drawables, args):
-        img = self._create_image()
 
-        self._create_art_layer(img)
-        safe_layer = self._create_safe_layer(img)
+        for image_type, spec in IMAGE_TYPES.items():
+            width = spec["width"]
+            height = spec["height"]
+            safe_ratio = spec["safe_ratio"]
 
-        self._draw_safe_area(img, safe_layer)
-        self._lock_layer(safe_layer)
-        self._add_guides(img)
-        self._save_template(img)
+            img = self._create_image(width, height)
 
-        img.delete()
+            self._new_layer(img, "ARTE", width, height).fill(
+                Gimp.FillType.WHITE
+            )
+            safe_layer = self._new_layer(
+                img, "SAFE-AREA", width, height
+            )
+
+            self._draw_safe_area(
+                img, safe_layer, width, height, safe_ratio
+            )
+            self._lock_layer(safe_layer)
+            self._add_guides(img, width, height, safe_ratio)
+            self._save_template(img, image_type, width, height)
+
+            img.delete()
 
         return procedure.new_return_values(
             Gimp.PDBStatusType.SUCCESS,
@@ -88,27 +154,19 @@ class KindleTemplates(Gimp.PlugIn):
     # ----------------------------------------------------------
     # Criação da imagem e camadas
     # ----------------------------------------------------------
-    def _create_image(self):
+    def _create_image(self, width, height):
         return Gimp.Image.new(
-            TEMPLATE_WIDTH,
-            TEMPLATE_HEIGHT,
+            width,
+            height,
             Gimp.ImageBaseType.RGB,
         )
 
-    def _create_art_layer(self, image):
-        layer = self._new_layer(image, "ARTE")
-        layer.fill(Gimp.FillType.WHITE)
-        return layer
-
-    def _create_safe_layer(self, image):
-        return self._new_layer(image, "SAFE-AREA")
-
-    def _new_layer(self, image, name):
+    def _new_layer(self, image, name, width, height):
         layer = Gimp.Layer.new(
             image,
             name,
-            TEMPLATE_WIDTH,
-            TEMPLATE_HEIGHT,
+            width,
+            height,
             Gimp.ImageType.RGBA_IMAGE,
             100.0,
             Gimp.LayerMode.NORMAL,
@@ -119,19 +177,21 @@ class KindleTemplates(Gimp.PlugIn):
     # ----------------------------------------------------------
     # SAFE-AREA
     # ----------------------------------------------------------
-    def _draw_safe_area(self, image, layer):
-        margin_x = int(TEMPLATE_WIDTH * SAFE_MARGIN_RATIO)
-        margin_y = int(TEMPLATE_HEIGHT * SAFE_MARGIN_RATIO)
+    def _draw_safe_area(self, image, layer, width, height, ratio):
+        margin_x = int(width * ratio)
+        margin_y = int(height * ratio)
 
         image.select_rectangle(
             Gimp.ChannelOps.REPLACE,
             margin_x,
             margin_y,
-            TEMPLATE_WIDTH - margin_x * 2,
-            TEMPLATE_HEIGHT - margin_y * 2,
+            width - margin_x * 2,
+            height - margin_y * 2,
         )
 
-        Gimp.context_set_foreground(Gegl.Color.new(SAFE_STROKE_COLOR))
+        Gimp.context_set_foreground(
+            Gegl.Color.new(SAFE_STROKE_COLOR)
+        )
         Gimp.context_set_line_width(SAFE_STROKE_WIDTH)
 
         layer.edit_stroke_item(layer)
@@ -144,24 +204,25 @@ class KindleTemplates(Gimp.PlugIn):
     # ----------------------------------------------------------
     # Guias
     # ----------------------------------------------------------
-    def _add_guides(self, image):
-        margin_x = int(TEMPLATE_WIDTH * SAFE_MARGIN_RATIO)
-        margin_y = int(TEMPLATE_HEIGHT * SAFE_MARGIN_RATIO)
+    def _add_guides(self, image, width, height, ratio):
+        margin_x = int(width * ratio)
+        margin_y = int(height * ratio)
 
         image.add_hguide(margin_y)
-        image.add_hguide(TEMPLATE_HEIGHT - margin_y)
+        image.add_hguide(height - margin_y)
         image.add_vguide(margin_x)
-        image.add_vguide(TEMPLATE_WIDTH - margin_x)
+        image.add_vguide(width - margin_x)
 
     # ----------------------------------------------------------
     # Salvamento
     # ----------------------------------------------------------
-    def _save_template(self, image):
+    def _save_template(self, image, image_type, width, height):
         templates_dir = f"{GLib.get_home_dir()}/.config/GIMP/3.0/templates"
         GLib.mkdir_with_parents(templates_dir, 0o755)
 
+        filename = f"{image_type}_{width}x{height}.xcf"
         file = Gio.File.new_for_path(
-            f"{templates_dir}/{TEMPLATE_FILENAME}"
+            f"{templates_dir}/{filename}"
         )
 
         Gimp.file_save(
@@ -173,7 +234,7 @@ class KindleTemplates(Gimp.PlugIn):
 
 
 # ==============================================================
-# Entrada do plug-in
+# Entrada
 # ==============================================================
 
 Gimp.main(KindleTemplates.__gtype_name__, sys.argv)
