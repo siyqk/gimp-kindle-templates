@@ -217,20 +217,23 @@ class KindleTemplates(Gimp.PlugIn):
     # Salvamento
     # ----------------------------------------------------------
     def _save_template(self, image, image_type, width, height):
-        templates_dir = f"{GLib.get_home_dir()}/.config/GIMP/3.0/templates"
-        GLib.mkdir_with_parents(templates_dir, 0o755)
-
+        base_dir = f"{GLib.get_home_dir()}/.config/GIMP/3.0/templates/Kindle"
+        type_dir = f"{base_dir}/{image_type}"
+    
+        GLib.mkdir_with_parents(type_dir, 0o755)
+    
         filename = f"{image_type}_{width}x{height}.xcf"
         file = Gio.File.new_for_path(
-            f"{templates_dir}/{filename}"
+            f"{type_dir}/{filename}"
         )
-
+    
         Gimp.file_save(
             Gimp.RunMode.NONINTERACTIVE,
             image,
             file,
             None,
         )
+    
 
 
 # ==============================================================
